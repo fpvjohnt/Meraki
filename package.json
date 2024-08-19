@@ -1,0 +1,11 @@
+{
+  "name": "meraki-health-check",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start-frontend": "cd frontend/meraki-health-check-frontend && npm start",
+    "build-frontend": "cd frontend/meraki-health-check-frontend && npm run build",
+    "test-frontend": "cd frontend/meraki-health-check-frontend && npm test",
+    "eject-frontend": "cd frontend/meraki-health-check-frontend && npm run eject"
+  }
+}

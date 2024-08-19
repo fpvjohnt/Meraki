@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-4 mb-4">Compare Health Checks</h1>
+    <form method="POST">
+        <div class="form-group">
+            <label for="check1">Select first health check:</label>
+            <select name="check1" id="check1" class="form-control" required>
+                {% for check in health_checks %}
+                <option value="{{ check.id }}">{{ check.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="check2">Select second health check:</label>
+            <select name="check2" id="check2" class="form-control" required>
+                {% for check in health_checks %}
+                <option value="{{ check.id }}">{{ check.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Compare</button>
+    </form>
+</div>
+{% endblock content %}

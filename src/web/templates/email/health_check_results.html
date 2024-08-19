@@ -1,0 +1,20 @@
+<html>
+<body>
+    <h2>Meraki Health Check Results</h2>
+    <p>Dear {{ user.username }},</p>
+    <p>Your scheduled Meraki health check has been completed. Here's a summary of the results:</p>
+
+    {% for network, checks in results.items() %}
+    <h3>Network: {{ network }}</h3>
+    <ul>
+        {% for check, result in checks.items() %}
+        <li>{{ check }}: <span style="color: {% if result.is_ok %}green{% else %}red{% endif %};">{% if result.is_ok %}OK{% else %}Failed{% endif %}</span></li>
+        {% endfor %}
+    </ul>
+    {% endfor %}
+
+    <p>For more detailed results, please <a href="{{ url_for('main.health_check_results', _external=True) }}">log in to the Meraki Health Check Tool</a>.</p>
+
+    <p>Best regards,<br>The Meraki Health Check Team</p>
+</body>
+</html>

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-4 mb-4">Network Health Dashboard</h1>
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <a href="{{ url_for('main.trend_analysis') }}" class="btn btn-primary">View Trend Analysis</a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('main.compare_health_checks') }}" class="btn btn-primary">Compare Health Checks</a>
+        </div>
+        <div class="col-md-4">
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#runCheckModal">
+                Run Health Check
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        {% for network, health in network_health.items() %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header {% if health.status == 'Healthy' %}bg-success{% else %}bg-danger{% endif %} text-white">
+                    {{ network }}
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Status: {{ health.status }}</h5>
+                    <p class="card-text">Last checked: {{ health.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                    <a href="{{ url_for('main.network_details', network=network) }}" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Modal for running health check -->
+<div class="modal fade" id="runCheckModal" tabindex="-1" role="dialog" aria-labelledby="runCheckModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="runCheckModalLabel">Run Health Check</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('main.run_check') }}" method="post">
+                    <div class="form-group">
+                        <label for="config_path">Config Path:</label>
+                        <input type="text" class="form-control" id="config_path" name="config_path" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Run Check</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

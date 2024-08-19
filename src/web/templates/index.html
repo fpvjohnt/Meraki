@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meraki Health Check Tool</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Meraki Health Check Tool</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <form action="/" method="post" id="health-check-form">
+        <label for="config_path">Config File Path:</label>
+        <input type="text" id="config_path" name="config_path" required>
+        <button type="submit">Run Health Check</button>
+    </form>
+    <div id="progress-bar" style="display: none;">
+        <div id="progress"></div>
+    </div>
+    <h2>Recent Health Checks</h2>
+    <table id="recent-checks">
+        <thead>
+            <tr>
+                <th>Config Path</th>
+                <th>Start Time</th>
+                <th>Duration</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for check in recent_checks %}
+            <tr>
+                <td>{{ check.config_path }}</td>
+                <td>{{ check.start_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td>{{ '%0.2f'| format(check.duration|float) }} seconds</td>
+                <td>{{ check.status }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <script>
+        $(document).ready(function() {
+            $('#health-check-form').on('submit', function() {
+                $('#progress-bar').show();
+                updateProgress(0);
+            });
+
+            function updateProgress(progress) {
+                $('#progress').css('width', progress + '%').text(progress + '%');
+                if (progress < 100) {
+                    setTimeout(function() {
+                        updateProgress(progress + 10);
+                    }, 500);
+                }
+            }
+
+            function updateRecentChecks() {
+                $.getJSON('/check_status', function(data) {
+                    var tbody = $('#recent-checks tbody');
+                    tbody.empty();
+                    $.each(data, function(i, check) {
+                        tbody.append(
+                            '<tr>' +
+                            '<td>' + check.config_path + '</td>' +
+                            '<td>' + new Date(check.start_time).toLocaleString() + '</td>' +
+                            '<td>' + check.duration.toFixed(2) + ' seconds</td>' +
+                            '<td>' + check.status + '</td>' +
+                            '</tr>'
+                        );
+                    });
+                });
+            }
+
+            setInterval(updateRecentChecks, 5000);  // Update every 5 seconds
+        });
+    </script>
+</body>
+</html>

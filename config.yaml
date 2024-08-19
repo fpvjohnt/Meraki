@@ -1,0 +1,29 @@
+api_key: "your_meraki_api_key_here"
+
+organizations:
+  - "org_id_1"
+  - "org_id_2"
+
+thresholds:
+  max_admins: 10
+  max_full_admins: 3
+  inventory_utilization: 80
+  max_unclaimed_devices: 5
+  license_expiration_warning: 30
+  firmware_age: 90
+  port_utilization: 80
+  stp_instances: 5
+  broadcast_rate: 100
+  multicast_rate: 100
+  topology_changes: 10
+  ssid_amount: 4
+  '5G Channel Utilization': 20
+  '5G Occurances Warning': 10
+  '5G Occurances Alarm': 50
+  '5G Min TX Power': 10
+  '5G Min Bitrate': 12
+  '5G Max Channel Width': 40
+
+api:
+  max_retries: 3
+  retry_interval: 1

@@ -1,0 +1,16 @@
+Dear {{ user.username }},
+
+Your scheduled Meraki health check has been completed. Here's a summary of the results:
+
+{% for network, checks in results.items() %}
+Network: {{ network }}
+{% for check, result in checks.items() %}
+  - {{ check }}: {% if result.is_ok %}OK{% else %}Failed{% endif %}
+{% endfor %}
+
+{% endfor %}
+
+For more detailed results, please log in to the Meraki Health Check Tool.
+
+Best regards,
+The Meraki Health Check Team

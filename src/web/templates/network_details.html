@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-4 mb-4">Network Details: {{ network }}</h1>
+    <div class="row">
+        {% for check, result in data.items() %}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header {% if result.is_ok %}bg-success{% else %}bg-danger{% endif %} text-white">
+                    {{ check }}
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Status: {% if result.is_ok %}OK{% else %}Issues Detected{% endif %}</h5>
+                    {% if result.details %}
+                    <h6 class="card-subtitle mb-2 text-muted">Details:</h6>
+                    <ul>
+                        {% for key, value in result.details.items() %}
+                        <li>{{ key }}: {{ value }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}

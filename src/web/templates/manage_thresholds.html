@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-4 mb-4">Manage Thresholds</h1>
+    <form method="POST" action="{{ url_for('main.manage_thresholds') }}">
+        {{ form.hidden_tag() }}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    {{ form.channel_utilization.label(class="form-control-label") }}
+                    {{ form.channel_utilization(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.occurrences_warning.label(class="form-control-label") }}
+                    {{ form.occurrences_warning(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.occurrences_alarm.label(class="form-control-label") }}
+                    {{ form.occurrences_alarm(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.min_tx_power.label(class="form-control-label") }}
+                    {{ form.min_tx_power(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.min_bitrate.label(class="form-control-label") }}
+                    {{ form.min_bitrate(class="form-control") }}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    {{ form.max_channel_width.label(class="form-control-label") }}
+                    {{ form.max_channel_width(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.broadcast_rate.label(class="form-control-label") }}
+                    {{ form.broadcast_rate(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.multicast_rate.label(class="form-control-label") }}
+                    {{ form.multicast_rate(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.topology_changes.label(class="form-control-label") }}
+                    {{ form.topology_changes(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.ssid_amount.label(class="form-control-label") }}
+                    {{ form.ssid_amount(class="form-control") }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-primary mt-3") }}
+        </div>
+    </form>
+</div>
+{% endblock content %}

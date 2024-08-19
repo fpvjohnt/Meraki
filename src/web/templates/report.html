@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meraki Health Check Report</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Meraki Health Check Report</h1>
+    <p>Generated on: {{ timestamp }}</p>
+
+    <h2>Summary</h2>
+    <ul>
+        <li>Total Organizations: {{ summary.total_orgs }}</li>
+        <li>Total Networks: {{ summary.total_networks }}</li>
+        <li>Total Checks: {{ summary.total_checks }}</li>
+        <li>Passed Checks: {{ summary.passed_checks }}</li>
+        <li>Warning Checks: {{ summary.warning_checks }}</li>
+        <li>Failed Checks: {{ summary.failed_checks }}</li>
+    </ul>
+
+    <h2>Charts</h2>
+    <div class="chart-container">
+        <canvas id="checkResultsChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="orgHealthChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="networkTypesChart"></canvas>
+    </div>
+
+    <h2>Detailed Results</h2>
+    {% for org_id, org_data in results.organizations.items() %}
+        <h3>Organization: {{ org_id }}</h3>
+        {% if "error" in org_data %}
+            <p class="error">Error: {{ org_data.error }}</p>
+        {% else %}
+            {% for network_id, network_data in org_data.networks.items() %}
+                <h4>Network: {{ network_id }}</h4>
+                {% for check_type in ["network_checks", "switch_checks"] %}
+                    {% if check_type in network_data %}
+                        <h5>{{ check_type|replace("_", " ")|title }}</h5>
+                        <ul>
+                        {% for check, result in network_data[check_type].items() %}
+                            <li>
+                                {{ check }}: 
+                                <span class="{{ result.status|lower }}">{{ result.status }}</span>
+                                {% if result.message %}
+                                    - {{ result.message }}
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+
+    <script>
+        // Check Results Chart
+        new Chart(document.getElementById('checkResultsChart'), {
+            type: 'pie',
+            data: {
+                labels: ['OK', 'WARNING', 'CRITICAL'],
+                datasets: [{
+                    data: [
+                        {{ charts_data.check_results.OK }},
+                        {{ charts_data.check_results.WARNING }},
+                        {{ charts_data.check_results.CRITICAL }}
+                    ],
+                    backgroundColor: ['#4CAF50', '#FFC107', '#F44336']
+                }]
+            },
+            options: {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: 'Check Results'
+                }
+            }
+        });
+
+        // Organization Health Chart
+        new Chart(document.getElementById('orgHealthChart'), {
+            type: 'bar',
+            data: {
+                labels: {{ charts_data.org_health.keys()|list|tojson }},
+                datasets: [{
+                    label: 'Health Score (%)',
+                    data: {{ charts_data.org_health.values()|list|tojson }},
+                    backgroundColor: '#2196F3'
+                }]
+            },
+            options: {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: 'Organization Health'
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+
+        // Network Types Chart
+        new Chart(document.getElementById('networkTypesChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Wireless', 'Switch', 'Appliance', 'Combined'],
+                datasets: [{
+                    data: [
+                        {{ charts_data.network_types.wireless }},
+                        {{ charts_data.network_types.switch }},
+                        {{ charts_data.network_types.appliance }},
+                        {{ charts_data.network_types.combined }}
+                    ],
+                    backgroundColor: ['#FF9800', '#9C27B0', '#00BCD4', '#795548']
+                }]
+            },
+            options: {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: 'Network Types'
+                }
+            }
+        });
+    </script>
+</body>
+</html>
